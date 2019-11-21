@@ -1,0 +1,43 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - AstPrinter",
+      "request": "launch",
+      "mainClass": "com.craftinginterpreters.lox.AstPrinter",
+      "projectName": "lox_a0cdefd9"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - GenerateAst",
+      "request": "launch",
+      "mainClass": "com.craftinginterpreters.tool.GenerateAst",
+      "projectName": "lox_a0cdefd9",
+      "args": "${command:SpecifyProgramArgs}"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - Lox",
+      "request": "launch",
+      "mainClass": "com.craftinginterpreters.lox.Lox",
+      "projectName": "lox_a0cdefd9"
+    },
+    {
+      "type": "java",
+      "name": "Debug (Launch) - Current File",
+      "request": "launch",
+      "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Debug (Launch)-Lox<lox_a0cdefd9>",
+      "request": "launch",
+      "mainClass": "Lox",
+      "projectName": "lox_a0cdefd9"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+expression     → comma ;
+comma          → ternary ( "," ternary )* ;
+ternary        → equality ( "?" primary ":" ternary )* ;
+equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+comparison     → addition ( ( ">" | ">=" | "<" | "<=" ) addition )* ;
+addition       → multiplication ( ( "-" | "+" ) multiplication )* ;
+multiplication → unary ( ( "/" | "*" ) unary )* ;
+unary          → ( "!" | "-" ) unary
+               | primary ;
+primary        → NUMBER | STRING | "false" | "true" | "nil"
+               | "(" expression ")" ;
