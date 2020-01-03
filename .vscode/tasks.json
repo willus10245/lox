@@ -1,0 +1,15 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build with Clang",
+      "type": "shell",
+      "command": "clang",
+      "args": ["-std=c11", "clox/*", "-o", "clox.out", "--debug"],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}
