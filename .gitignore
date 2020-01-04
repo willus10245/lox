@@ -1,6 +1,3 @@
 a.out
-chunk.o
-debug.o
-main.o
-memory.o
-value.o
+*.o
+lox
