@@ -1,4 +1,4 @@
-obj_files = chunk.o compiler.o main.o debug.o memory.o scanner.o value.o vm.o
+obj_files = chunk.o compiler.o debug.o main.o memory.o scanner.o value.o vm.o
 
 clox: $(obj_files)
 	clang $(obj_files) -o lox
@@ -28,4 +28,4 @@ vm.o:
 	clang -c clox/vm.c
 
 clean:
-	rm -f $(obj_files) a.out
+	rm -f $(obj_files) a.out lox
