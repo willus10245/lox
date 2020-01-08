@@ -1,4 +1,4 @@
-obj_files = chunk.o compiler.o debug.o main.o memory.o scanner.o value.o vm.o
+obj_files = chunk.o compiler.o debug.o main.o memory.o object.o scanner.o value.o vm.o
 
 clox: $(obj_files)
 	clang $(obj_files) -o lox
@@ -17,6 +17,9 @@ main.o: vm.o
 
 memory.o:
 	clang -c clox/memory.c
+
+object.o:
+	clang -c clox/object.c
 
 scanner.o:
 	clang -c clox/scanner.c
