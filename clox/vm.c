@@ -67,6 +67,12 @@ void initVM()
 {
   resetStack();
   vm.objects = NULL;
+  vm.bytesAllocated = 0;
+  vm.nextGC = 1024 * 1024;
+
+  vm.grayCount = 0;
+  vm.grayCapacity = 0;
+  vm.grayStack = NULL;
 
   initTable(&vm.globals);
   initTable(&vm.strings);
@@ -127,6 +133,12 @@ static bool callValue(Value callee, int argCount)
   {
     switch (OBJ_TYPE(callee))
     {
+    case OBJ_CLASS:
+    {
+      ObjClass *klass = AS_CLASS(callee);
+      vm.stackTop[-argCount - 1] = OBJ_VAL(newInstance(klass));
+      return true;
+    }
     case OBJ_CLOSURE:
       return call(AS_CLOSURE(callee), argCount);
 
@@ -197,8 +209,8 @@ static bool isFalsey(Value value)
 
 static void concatenate()
 {
-  ObjString *b = AS_STRING(pop());
-  ObjString *a = AS_STRING(pop());
+  ObjString *b = AS_STRING(peek(0));
+  ObjString *a = AS_STRING(peek(1));
 
   int length = a->length + b->length;
   char *chars = ALLOCATE(char, length + 1);
@@ -207,6 +219,8 @@ static void concatenate()
   chars[length] = '\0';
 
   ObjString *result = takeString(chars, length);
+  pop();
+  pop();
   push(OBJ_VAL(result));
 }
 
@@ -333,6 +347,46 @@ static InterpretResult run()
     {
       uint8_t slot = READ_BYTE();
       *frame->closure->upvalues[slot]->location = peek(0);
+      break;
+    }
+
+    case OP_GET_PROPERTY:
+    {
+      if (!IS_INSTANCE(peek(0)))
+      {
+        runtimeError("Only instances have proerties");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+
+      ObjInstance *instance = AS_INSTANCE(peek(0));
+      ObjString *name = READ_STRING();
+
+      Value value;
+      if (tableGet(&instance->fields, name, &value))
+      {
+        pop(); // Instance
+        push(value);
+        break;
+      }
+
+      runtimeError("Undefined propery '%s'", name->chars);
+      return INTERPRET_RUNTIME_ERROR;
+    }
+
+    case OP_SET_PROPERTY:
+    {
+      if (!IS_INSTANCE(peek(1)))
+      {
+        runtimeError("Only instances have fields");
+        return INTERPRET_RUNTIME_ERROR;
+      }
+
+      ObjInstance *instance = AS_INSTANCE(peek(1));
+      tableSet(&instance->fields, READ_STRING(), peek(0));
+
+      Value value = pop();
+      pop();
+      push(value);
       break;
     }
 
@@ -475,6 +529,10 @@ static InterpretResult run()
       frame = &vm.frames[vm.frameCount - 1];
       break;
     }
+
+    case OP_CLASS:
+      push(OBJ_VAL(newClass(READ_STRING())));
+      break;
 
     default:
       break;
